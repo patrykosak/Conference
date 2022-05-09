@@ -21,5 +21,5 @@ public class AppUser {
     private Long appUserId;
     private String login;
     private String email;
-    
+
 }
