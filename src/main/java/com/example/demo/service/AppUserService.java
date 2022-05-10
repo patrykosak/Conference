@@ -35,7 +35,9 @@ public class AppUserService {
 
     public AppUser signUpAppUser(UserLecture userLecture) throws IOException {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
-        if(userLecture.getEmail().equals(appUserDB.getEmail())){
+        List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
+
+        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5){
             appUserDB.getLecturesId().add(userLecture.getLectureId());
 
             Date date = new Date();
