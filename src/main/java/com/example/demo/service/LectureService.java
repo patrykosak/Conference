@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.Lecture;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
