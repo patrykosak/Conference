@@ -7,6 +7,7 @@ import com.example.demo.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class AppUserController {
     }
 
     @PostMapping("/users/signup")
-    public AppUser signUpAppUser(@RequestBody UserLecture userLecture){
+    public AppUser signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
         return appUserService.signUpAppUser(userLecture);
     }
 }
