@@ -37,4 +37,13 @@ public class LectureService implements CommandLineRunner {
     public List<Lecture> fetchLectureList(){
         return lectures;
     }
+    public Lecture fetchLecture(Long lectureId) {
+        Lecture lecture = lectures.stream()
+                .filter(l -> l.getLectureId() == lectureId)
+                .reduce((a, b) -> {
+                    throw new IllegalStateException("Lecture with that id not exists");
+                })
+                .get();
+        return lecture;
+    }
 }

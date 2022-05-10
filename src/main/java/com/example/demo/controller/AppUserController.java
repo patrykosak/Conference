@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.Lecture;
+import com.example.demo.dto.UserLecture;
 import com.example.demo.entity.AppUser;
 import com.example.demo.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,8 +20,18 @@ public class AppUserController {
         return appUserService.fetchUserList();
     }
 
+    @GetMapping("/users/lectures")
+    public List<Lecture> fetchUserLectures(@RequestParam String login){
+        return appUserService.fetchUserLectures(login);
+    }
+
     @PostMapping("/users/save")
-    public AppUser saveAuthor(@RequestBody AppUser appUser){
+    public AppUser saveAppUser(@RequestBody AppUser appUser){
         return appUserService.saveAppUser(appUser);
+    }
+
+    @PostMapping("/users/signup")
+    public AppUser signUpAppUser(@RequestBody UserLecture userLecture){
+        return appUserService.signUpAppUser(userLecture);
     }
 }
