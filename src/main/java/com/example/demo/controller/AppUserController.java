@@ -40,4 +40,9 @@ public class AppUserController {
     public AppUser cancelLecture(@RequestBody UserLecture userLecture) {
         return appUserService.cancelLecture(userLecture);
     }
+
+    @PutMapping("/users/changeemail/{logib}")
+    public AppUser cancelLecture(@RequestParam("login") String login, @RequestBody String email) {
+        return appUserService.changeEmail(login,email);
+    }
 }

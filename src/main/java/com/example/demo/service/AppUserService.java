@@ -7,7 +7,6 @@ import com.example.demo.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -62,6 +61,12 @@ public class AppUserService {
     public AppUser cancelLecture(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         appUserDB.getLecturesId().remove(userLecture.getLectureId());
+        return saveAppUser(appUserDB);
+    }
+
+    public AppUser changeEmail(String login, String email) {
+        AppUser appUserDB = appUserRepository.getById(login);
+        appUserDB.setEmail(email);
         return saveAppUser(appUserDB);
     }
 }
