@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.Interest;
 import com.example.demo.Lecture;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,55 @@ public class LectureService implements CommandLineRunner {
                 .lectureId(1L)
                 .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0))
                 .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 11, 45))
+                .thematicPath("frontend")
                 .build());
         lectures.add(Lecture.builder()
                 .lectureId(2L)
-                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0))
-                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 13, 45))
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 11, 45))
+                .thematicPath("backend")
                 .build());
         lectures.add(Lecture.builder()
                 .lectureId(3L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 11, 45))
+                .thematicPath("mobile")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(4L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 13, 45))
+                .thematicPath("frontend")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(5L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 13, 45))
+                .thematicPath("backend")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(6L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 13, 45))
+                .thematicPath("mobile")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(7L)
                 .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 14, 0))
                 .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 15, 45))
+                .thematicPath("frontend")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(8L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 14, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 15, 45))
+                .thematicPath("backend")
+                .build());
+        lectures.add(Lecture.builder()
+                .lectureId(9L)
+                .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 14, 0))
+                .endDate(LocalDateTime.of(2021, Month.JUNE, 1, 15, 45))
+                .thematicPath("mobile")
                 .build());
 
     }
@@ -45,5 +85,11 @@ public class LectureService implements CommandLineRunner {
                 })
                 .get();
         return lecture;
+    }
+
+    public List<String> fetchInterests() {
+        List<String> listByInterst = new ArrayList<>();
+        listByInterst.add("Procentowy udział uczestników w danym wykładzie: ");
+        listByInterst.add("Procentowy udział uczestników w danej ścieżce tematycznej: ");
     }
 }
