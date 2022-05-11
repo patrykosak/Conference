@@ -58,4 +58,10 @@ public class AppUserService {
         }
         return lectures;
     }
+
+    public AppUser cancelLecture(UserLecture userLecture) {
+        AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
+        appUserDB.getLecturesId().remove(userLecture.getLectureId());
+        return saveAppUser(appUserDB);
+    }
 }

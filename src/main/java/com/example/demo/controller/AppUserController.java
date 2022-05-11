@@ -35,4 +35,9 @@ public class AppUserController {
     public AppUser signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
         return appUserService.signUpAppUser(userLecture);
     }
+
+    @PostMapping("/users/cancel")
+    public AppUser cancelLecture(@RequestBody UserLecture userLecture) {
+        return appUserService.cancelLecture(userLecture);
+    }
 }
