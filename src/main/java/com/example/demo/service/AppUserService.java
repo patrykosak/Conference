@@ -5,6 +5,8 @@ import com.example.demo.dto.UserLecture;
 import com.example.demo.entity.AppUser;
 import com.example.demo.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
@@ -27,11 +29,24 @@ public class AppUserService {
         return appUserRepository.findAll();
     }
 
-    public AppUser saveAppUser(AppUser appUser) {
-        return appUserRepository.save(appUser);
+    public ResponseEntity<?> saveAppUser(AppUser appUser) {
+        if(appUserRepository.existsById(appUser.getLogin())) {
+            AppUser appUserDB = appUserRepository.getById(appUser.getLogin());
+            if (appUser.getLogin().equals(appUserDB.getLogin()) && !appUser.getEmail().equals(appUserDB.getEmail())) {
+                return new ResponseEntity<>(
+                        "Podany login jest już zajęty",
+                        HttpStatus.NOT_ACCEPTABLE);
+            }
+            else if(appUser.getLogin().equals(appUserDB.getLogin()) && appUser.getEmail().equals(appUserDB.getEmail())){
+                return new ResponseEntity<>(
+                        "Takie konto już istnieje",
+                        HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+        return ResponseEntity.ok(appUserRepository.save(appUser));
     }
 
-    public AppUser signUpAppUser(UserLecture userLecture) throws IOException {
+    public ResponseEntity<?> signUpAppUser(UserLecture userLecture) throws IOException {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
         List<Long> lecturesAtThisHour = lectureService.fetchLectureListAtThisHour(lectureService.getLectureStartDate(userLecture.getLectureId()));
@@ -57,13 +72,13 @@ public class AppUserService {
         return lectures;
     }
 
-    public AppUser cancelLecture(UserLecture userLecture) {
+    public ResponseEntity<?> cancelLecture(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         appUserDB.getLecturesId().remove(userLecture.getLectureId());
         return saveAppUser(appUserDB);
     }
 
-    public AppUser changeEmail(String login, String email) {
+    public ResponseEntity<?> changeEmail(String login, String email) {
         AppUser appUserDB = appUserRepository.getById(login);
         appUserDB.setEmail(email);
         return saveAppUser(appUserDB);

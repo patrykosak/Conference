@@ -5,6 +5,7 @@ import com.example.demo.dto.UserLecture;
 import com.example.demo.entity.AppUser;
 import com.example.demo.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,22 +28,22 @@ public class AppUserController {
     }
 
     @PostMapping("/users/save")
-    public AppUser saveAppUser(@RequestBody AppUser appUser){
+    public ResponseEntity<?> saveAppUser(@RequestBody AppUser appUser){
         return appUserService.saveAppUser(appUser);
     }
 
     @PostMapping("/users/signup")
-    public AppUser signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
+    public ResponseEntity<?> signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
         return appUserService.signUpAppUser(userLecture);
     }
 
     @PostMapping("/users/cancel")
-    public AppUser cancelLecture(@RequestBody UserLecture userLecture) {
+    public ResponseEntity<?> cancelLecture(@RequestBody UserLecture userLecture) {
         return appUserService.cancelLecture(userLecture);
     }
 
     @PutMapping("/users/changeemail/{login}")
-    public AppUser changeEmail(@PathVariable("login") String login, @RequestParam String email) {
+    public ResponseEntity<?> changeEmail(@PathVariable("login") String login, @RequestParam String email) {
         return appUserService.changeEmail(login,email);
     }
 }
