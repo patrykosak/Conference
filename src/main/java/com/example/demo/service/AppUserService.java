@@ -58,11 +58,6 @@ public class AppUserService {
         return lectures;
     }
 
-    public List<AppUser> fetchUserListParticipateInLecture(Long lectureId) {
-        List<AppUser> appUsers = appUserRepository.findAllByLecturesIdContaining(lectureId);
-        return appUsers;
-    }
-
     public AppUser cancelLecture(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         appUserDB.getLecturesId().remove(userLecture.getLectureId());

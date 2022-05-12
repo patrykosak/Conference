@@ -42,7 +42,7 @@ public class AppUserController {
     }
 
     @PutMapping("/users/changeemail/{login}")
-    public AppUser cancelLecture(@RequestParam("login") String login, @RequestBody String email) {
+    public AppUser changeEmail(@PathVariable("login") String login, @RequestParam String email) {
         return appUserService.changeEmail(login,email);
     }
 }

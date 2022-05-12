@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.Interest;
 import com.example.demo.Lecture;
 import com.example.demo.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
