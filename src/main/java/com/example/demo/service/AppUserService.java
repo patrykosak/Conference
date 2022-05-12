@@ -36,7 +36,7 @@ public class AppUserService {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
 
-        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5){
+        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5&&!appUserDB.getLecturesId().contains(userLecture.getLectureId())){
             appUserDB.getLecturesId().add(userLecture.getLectureId());
 
             Date date = new Date();
