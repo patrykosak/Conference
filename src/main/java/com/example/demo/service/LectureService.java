@@ -82,6 +82,25 @@ public class LectureService implements CommandLineRunner {
     public List<Lecture> fetchLectureList(){
         return lectures;
     }
+
+    public LocalDateTime getLectureStartDate(Long lectureId){
+        Lecture lecture = lectures.stream()
+                .filter(l -> l.getLectureId() == lectureId)
+                .reduce((a, b) -> {
+                    throw new IllegalStateException("Lecture with that id not exists");
+                })
+                .get();
+        return lecture.getStartDate();
+    }
+
+    public List<Long> fetchLectureListAtThisHour(LocalDateTime date){
+        List<Long> lecture = lectures.stream()
+                .filter(l -> l.getStartDate().equals(date))
+                .map(Lecture::getLectureId)
+                .collect(Collectors.toList());
+        return lecture;
+    }
+
     public Lecture fetchLecture(Long lectureId) {
         Lecture lecture = lectures.stream()
                 .filter(l -> l.getLectureId() == lectureId)

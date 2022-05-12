@@ -20,7 +20,6 @@ public class AppUserService {
 
     @Autowired
     private AppUserRepository appUserRepository;
-
     @Autowired
     private LectureService lectureService;
 
@@ -35,8 +34,8 @@ public class AppUserService {
     public AppUser signUpAppUser(UserLecture userLecture) throws IOException {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
-
-        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5&&!appUserDB.getLecturesId().contains(userLecture.getLectureId())){
+        List<Long> lecturesAtThisHour = lectureService.fetchLectureListAtThisHour(lectureService.getLectureStartDate(userLecture.getLectureId()));
+        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5&&!lecturesAtThisHour.stream().anyMatch(l->appUserDB.getLecturesId().contains(l))){
             appUserDB.getLecturesId().add(userLecture.getLectureId());
 
             Date date = new Date();
