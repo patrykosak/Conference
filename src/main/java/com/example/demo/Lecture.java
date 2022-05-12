@@ -14,5 +14,4 @@ public class Lecture {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String thematicPath;
-    private Set<AppUser> users;
 }

@@ -1,7 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.Interest;
 import com.example.demo.Lecture;
+import com.example.demo.repository.AppUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -9,11 +10,15 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LectureService implements CommandLineRunner {
 
     private List<Lecture> lectures = new ArrayList<>();
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -87,9 +92,36 @@ public class LectureService implements CommandLineRunner {
         return lecture;
     }
 
+    public String fetchLecturesWithThematicPath(String thematicPath) {
+        List<Lecture> lecture = lectures.stream()
+                .filter(l -> l.getThematicPath().equals(thematicPath))
+                .collect(Collectors.toList());
+        double amount = 0;
+        for(Lecture l:lecture){
+            amount += appUserRepository.findAllByLecturesIdContaining(l.getLectureId()).size();
+        }
+        return "Procentowy udział uczestników w ścieżce tematycznej: " + thematicPath + " " + amount/(lecture.size()*5)*100 + "%";
+    }
+
+    public String fetchLecturesWithStartDate(LocalDateTime date) {
+        List<Lecture> lecture = lectures.stream()
+                .filter(l -> l.getStartDate().equals(date))
+                .collect(Collectors.toList());
+        double amount = 0;
+        for(Lecture l:lecture){
+            amount += appUserRepository.findAllByLecturesIdContaining(l.getLectureId()).size();
+        }
+        return "Procentowy udział uczestników w wykładzie o : " + date + " " + amount/(lecture.size()*5)*100 + "%";
+    }
+
     public List<String> fetchInterests() {
-        List<String> listByInterst = new ArrayList<>();
-        listByInterst.add("Procentowy udział uczestników w danym wykładzie: ");
-        listByInterst.add("Procentowy udział uczestników w danej ścieżce tematycznej: ");
+        List<String> listByInterest = new ArrayList<>();
+        listByInterest.add(fetchLecturesWithStartDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0)));
+        listByInterest.add(fetchLecturesWithStartDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0)));
+        listByInterest.add(fetchLecturesWithStartDate(LocalDateTime.of(2021, Month.JUNE, 1, 14, 0)));
+        listByInterest.add(fetchLecturesWithThematicPath("frontend"));
+        listByInterest.add(fetchLecturesWithThematicPath("backend"));
+        listByInterest.add(fetchLecturesWithThematicPath("mobile"));
+        return listByInterest;
     }
 }
