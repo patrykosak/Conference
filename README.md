@@ -1,6 +1,6 @@
 # Instrukcja uruchomienia projektu
 1. Sklonuj repozytorium i otwórz w Intelij IDEA.
-2. Odpal alpikacje z klasy DemoApplication.
+2. Odpal aplikacje z klasy DemoApplication.
 3. Pobierz i zainstaluj postmana jeśli nie posiadasz.
 4. Przetestuj aplikacje przykładowymi zapytaniami.
 
