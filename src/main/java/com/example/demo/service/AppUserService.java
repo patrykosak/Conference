@@ -46,7 +46,7 @@ public class AppUserService {
         return ResponseEntity.ok(appUserRepository.save(appUser));
     }
 
-    public ResponseEntity<?> signUpAppUser(UserLecture userLecture) throws IOException {
+    public AppUser signUpAppUser(UserLecture userLecture) throws IOException {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
         List<Long> lecturesAtThisHour = lectureService.fetchLectureListAtThisHour(lectureService.getLectureStartDate(userLecture.getLectureId()));
@@ -60,7 +60,7 @@ public class AppUserService {
             writer.println("data wysłania: " + formatter.format(date) + " " + "do: " + appUserDB.getEmail() + " " + "Zapisałeś się na kurs");
             writer.close();
         }
-        return saveAppUser(appUserDB);
+        return appUserRepository.save(appUserDB);
     }
 
     public List<Lecture> fetchUserLectures(String login) {
@@ -72,16 +72,16 @@ public class AppUserService {
         return lectures;
     }
 
-    public ResponseEntity<?> cancelLecture(UserLecture userLecture) {
+    public AppUser cancelLecture(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         appUserDB.getLecturesId().remove(userLecture.getLectureId());
-        return saveAppUser(appUserDB);
+        return appUserRepository.save(appUserDB);
     }
 
-    public ResponseEntity<?> changeEmail(String login, String email) {
+    public AppUser changeEmail(String login, String email) {
         AppUser appUserDB = appUserRepository.getById(login);
         appUserDB.setEmail(email);
-        return saveAppUser(appUserDB);
+        return appUserRepository.save(appUserDB);
     }
 
 }

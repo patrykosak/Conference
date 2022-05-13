@@ -22,8 +22,8 @@ public class AppUserController {
         return appUserService.fetchUserList();
     }
 
-    @GetMapping("/users/lectures")
-    public List<Lecture> fetchUserLectures(@RequestParam String login){
+    @GetMapping("/users/lectures/{login}")
+    public List<Lecture> fetchUserLectures(@PathVariable("login") String login){
         return appUserService.fetchUserLectures(login);
     }
 
@@ -33,17 +33,17 @@ public class AppUserController {
     }
 
     @PostMapping("/users/signup")
-    public ResponseEntity<?> signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
+    public AppUser signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
         return appUserService.signUpAppUser(userLecture);
     }
 
     @PostMapping("/users/cancel")
-    public ResponseEntity<?> cancelLecture(@RequestBody UserLecture userLecture) {
+    public AppUser cancelLecture(@RequestBody UserLecture userLecture) {
         return appUserService.cancelLecture(userLecture);
     }
 
     @PutMapping("/users/changeemail/{login}")
-    public ResponseEntity<?> changeEmail(@PathVariable("login") String login, @RequestParam String email) {
+    public AppUser changeEmail(@PathVariable("login") String login, @RequestParam String email) {
         return appUserService.changeEmail(login,email);
     }
 }
