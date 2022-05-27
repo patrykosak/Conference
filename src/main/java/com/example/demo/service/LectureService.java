@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.Lecture;
 import com.example.demo.repository.AppUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
 @Service
 public class LectureService implements CommandLineRunner {
 
-    private List<Lecture> lectures = new ArrayList<>();
+    private int MAX_NUMBER_OF_USERS = 5;
+    private final List<Lecture> lectures = new ArrayList<>();
 
-    @Autowired
     private AppUserRepository appUserRepository;
 
+    public LectureService(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
+    }
+
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
         lectures.add(Lecture.builder()
                 .lectureId(1L)
                 .startDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0))
@@ -79,36 +83,30 @@ public class LectureService implements CommandLineRunner {
 
     }
 
-    public List<Lecture> fetchLectureList(){
-        return lectures;
+    public ResponseEntity<?> fetchLectureList(){
+        return ResponseEntity.ok(lectures);
     }
 
     public LocalDateTime getLectureStartDate(Long lectureId){
         Lecture lecture = lectures.stream()
-                .filter(l -> l.getLectureId() == lectureId)
-                .reduce((a, b) -> {
-                    throw new IllegalStateException("Lecture with that id not exists");
-                })
+                .filter(l -> l.getLectureId().equals(lectureId))
+                .findFirst()
                 .get();
         return lecture.getStartDate();
     }
 
     public List<Long> fetchLectureListAtThisHour(LocalDateTime date){
-        List<Long> lecture = lectures.stream()
+        return lectures.stream()
                 .filter(l -> l.getStartDate().equals(date))
                 .map(Lecture::getLectureId)
                 .collect(Collectors.toList());
-        return lecture;
     }
 
     public Lecture fetchLecture(Long lectureId) {
-        Lecture lecture = lectures.stream()
-                .filter(l -> l.getLectureId() == lectureId)
-                .reduce((a, b) -> {
-                    throw new IllegalStateException("Lecture with that id not exists");
-                })
+        return lectures.stream()
+                .filter(l -> l.getLectureId().equals(lectureId))
+                .findFirst()
                 .get();
-        return lecture;
     }
 
     public String fetchLecturesWithThematicPath(String thematicPath) {
@@ -119,7 +117,7 @@ public class LectureService implements CommandLineRunner {
         for(Lecture l:lecture){
             amount += appUserRepository.findAllByLecturesIdContaining(l.getLectureId()).size();
         }
-        return "Procentowy udział uczestników w ścieżce tematycznej: " + thematicPath + " " + amount/(lecture.size()*5)*100 + "%";
+        return "Procentowy udział uczestników w ścieżce tematycznej: " + thematicPath + " " + amount/(lecture.size()*MAX_NUMBER_OF_USERS)*100 + "%";
     }
 
     public String fetchLecturesWithStartDate(LocalDateTime date) {
@@ -130,10 +128,10 @@ public class LectureService implements CommandLineRunner {
         for(Lecture l:lecture){
             amount += appUserRepository.findAllByLecturesIdContaining(l.getLectureId()).size();
         }
-        return "Procentowy udział uczestników w wykładzie o : " + date + " " + amount/(lecture.size()*5)*100 + "%";
+        return "Procentowy udział uczestników w wykładzie o : " + date + " " + amount/(lecture.size()*MAX_NUMBER_OF_USERS)*100 + "%";
     }
 
-    public List<String> fetchInterests() {
+    public ResponseEntity<?> fetchInterests() {
         List<String> listByInterest = new ArrayList<>();
         listByInterest.add(fetchLecturesWithStartDate(LocalDateTime.of(2021, Month.JUNE, 1, 10, 0)));
         listByInterest.add(fetchLecturesWithStartDate(LocalDateTime.of(2021, Month.JUNE, 1, 12, 0)));
@@ -141,6 +139,6 @@ public class LectureService implements CommandLineRunner {
         listByInterest.add(fetchLecturesWithThematicPath("frontend"));
         listByInterest.add(fetchLecturesWithThematicPath("backend"));
         listByInterest.add(fetchLecturesWithThematicPath("mobile"));
-        return listByInterest;
+        return ResponseEntity.ok(listByInterest);
     }
 }

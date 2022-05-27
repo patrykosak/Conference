@@ -1,15 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.Lecture;
 import com.example.demo.dto.UserLecture;
 import com.example.demo.entity.AppUser;
 import com.example.demo.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 public class AppUserController {
@@ -18,12 +14,12 @@ public class AppUserController {
     private AppUserService appUserService;
 
     @GetMapping("/users")
-    public List<AppUser> fetchUserList(){
+    public ResponseEntity<?> fetchUserList(){
         return appUserService.fetchUserList();
     }
 
     @GetMapping("/users/lectures/{login}")
-    public List<Lecture> fetchUserLectures(@PathVariable("login") String login){
+    public ResponseEntity<?> fetchUserLectures(@PathVariable("login") String login){
         return appUserService.fetchUserLectures(login);
     }
 
@@ -33,17 +29,17 @@ public class AppUserController {
     }
 
     @PostMapping("/users/signup")
-    public AppUser signUpAppUser(@RequestBody UserLecture userLecture) throws IOException {
+    public ResponseEntity<?> signUpAppUser(@RequestBody UserLecture userLecture) {
         return appUserService.signUpAppUser(userLecture);
     }
 
     @PostMapping("/users/cancel")
-    public AppUser cancelLecture(@RequestBody UserLecture userLecture) {
+    public ResponseEntity<?> cancelLecture(@RequestBody UserLecture userLecture) {
         return appUserService.cancelLecture(userLecture);
     }
 
     @PutMapping("/users/changeemail/{login}")
-    public AppUser changeEmail(@PathVariable("login") String login, @RequestParam String email) {
+    public ResponseEntity<?> changeEmail(@PathVariable("login") String login, @RequestParam String email) {
         return appUserService.changeEmail(login,email);
     }
 }

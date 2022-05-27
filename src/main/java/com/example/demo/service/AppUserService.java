@@ -4,7 +4,6 @@ import com.example.demo.Lecture;
 import com.example.demo.dto.UserLecture;
 import com.example.demo.entity.AppUser;
 import com.example.demo.repository.AppUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,13 +19,17 @@ import java.util.List;
 @Service
 public class AppUserService {
 
-    @Autowired
+    private int MAX_NUMBER_OF_USERS = 5;
     private AppUserRepository appUserRepository;
-    @Autowired
     private LectureService lectureService;
 
-    public List<AppUser> fetchUserList() {
-        return appUserRepository.findAll();
+    public AppUserService(AppUserRepository appUserRepository, LectureService lectureService) {
+        this.appUserRepository = appUserRepository;
+        this.lectureService = lectureService;
+    }
+
+    public ResponseEntity<?> fetchUserList() {
+        return ResponseEntity.ok(appUserRepository.findAll());
     }
 
     public ResponseEntity<?> saveAppUser(AppUser appUser) {
@@ -46,42 +49,51 @@ public class AppUserService {
         return ResponseEntity.ok(appUserRepository.save(appUser));
     }
 
-    public AppUser signUpAppUser(UserLecture userLecture) throws IOException {
+    public ResponseEntity<?> signUpAppUser(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
-        List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
-        List<Long> lecturesAtThisHour = lectureService.fetchLectureListAtThisHour(lectureService.getLectureStartDate(userLecture.getLectureId()));
-        if(userLecture.getEmail().equals(appUserDB.getEmail())&&usersSignedForLecture.size()<5&&!lecturesAtThisHour.stream().anyMatch(l->appUserDB.getLecturesId().contains(l))){
+        if(canUserSignUpToLecture(userLecture,appUserDB)){
             appUserDB.getLecturesId().add(userLecture.getLectureId());
 
             Date date = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-            PrintWriter writer = new PrintWriter(new FileWriter("Powiadomienia",true));
-            writer.println("data wysłania: " + formatter.format(date) + " " + "do: " + appUserDB.getEmail() + " " + "Zapisałeś się na kurs");
-            writer.close();
+            try( PrintWriter writer = new PrintWriter(new FileWriter("Powiadomienia",true))){
+                writer.println("data wysłania: " + formatter.format(date) + " " + "do: " + appUserDB.getEmail() + " " + "Zapisałeś się na kurs");
+            } catch (IOException ioException) {
+                return new ResponseEntity<>(
+                        "Błąd z zapisem do pliku",
+                        HttpStatus.FORBIDDEN);
+            }
+
         }
-        return appUserRepository.save(appUserDB);
+        return ResponseEntity.ok(appUserRepository.save(appUserDB));
     }
 
-    public List<Lecture> fetchUserLectures(String login) {
+    public boolean canUserSignUpToLecture(UserLecture userLecture,AppUser appUserDB){
+        List<AppUser> usersSignedForLecture = appUserRepository.findAllByLecturesIdContaining(userLecture.getLectureId());
+        List<Long> lecturesAtThisHour = lectureService.fetchLectureListAtThisHour(lectureService.getLectureStartDate(userLecture.getLectureId()));
+        return userLecture.getEmail().equals(appUserDB.getEmail()) && usersSignedForLecture.size() < MAX_NUMBER_OF_USERS && lecturesAtThisHour.stream().noneMatch(l -> appUserDB.getLecturesId().contains(l));
+    }
+
+    public ResponseEntity<?> fetchUserLectures(String login) {
         AppUser appUserDB = appUserRepository.getById(login);
         List<Lecture> lectures = new ArrayList<>();
         for(Long lectureId:appUserDB.getLecturesId()) {
             lectures.add(lectureService.fetchLecture(lectureId));
         }
-        return lectures;
+        return ResponseEntity.ok(lectures);
     }
 
-    public AppUser cancelLecture(UserLecture userLecture) {
+    public ResponseEntity<?> cancelLecture(UserLecture userLecture) {
         AppUser appUserDB = appUserRepository.getById(userLecture.getLogin());
         appUserDB.getLecturesId().remove(userLecture.getLectureId());
-        return appUserRepository.save(appUserDB);
+        return ResponseEntity.ok(appUserRepository.save(appUserDB));
     }
 
-    public AppUser changeEmail(String login, String email) {
+    public ResponseEntity<?> changeEmail(String login, String email) {
         AppUser appUserDB = appUserRepository.getById(login);
         appUserDB.setEmail(email);
-        return appUserRepository.save(appUserDB);
+        return ResponseEntity.ok(appUserRepository.save(appUserDB));
     }
 
 }
